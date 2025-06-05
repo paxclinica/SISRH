@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Ata de Reunião - Pax Clínica{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3">Editar Ata de Reunião</h1>
+            <p class="lead">Atualize as informações da ata de reunião</p>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('atas.listar_atas') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="nome" class="form-label">Nome da Reunião</label>
+                    <input type="text" class="form-control" id="nome" name="nome" value="{{ ata.nome }}" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="data_reuniao" class="form-label">Data da Reunião</label>
+                    <input type="date" class="form-control" id="data_reuniao" name="data_reuniao" value="{{ ata.data_reuniao.strftime('%Y-%m-%d') }}" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="informacoes" class="form-label">Informações</label>
+                    <textarea class="form-control" id="informacoes" name="informacoes" rows="5" required>{{ ata.informacoes }}</textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Participantes</label>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <div class="form-text mb-2">Selecione os participantes da reunião:</div>
+                                <div class="row">
+                                    {% for pessoa in pessoas %}
+                                        <div class="col-md-6 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="participantes" value="{{ pessoa.id }}" id="participante-{{ pessoa.id }}" 
+                                                       {% if pessoa.id in participantes_atuais %}checked{% endif %}>
+                                                <label class="form-check-label" for="participante-{{ pessoa.id }}">
+                                                    {{ pessoa.nome }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="arquivo_ata" class="form-label">Arquivo da Ata (opcional)</label>
+                    {% if ata.arquivo_ata %}
+                    <div class="mb-2">
+                        <a href="{{ url_for('static', filename='uploads/atas/' + ata.arquivo_ata) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-file-earmark-text"></i> Ver arquivo atual
+                        </a>
+                    </div>
+                    {% endif %}
+                    <input type="file" class="form-control" id="arquivo_ata" name="arquivo_ata">
+                    <div class="form-text">Deixe em branco para manter o arquivo atual.</div>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-pax-primary">Atualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

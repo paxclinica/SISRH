@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes do Treinamento - Pax Clínica{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3">Detalhes do Treinamento</h1>
+            <p class="lead">{{ treinamento.nome }}</p>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('treinamentos.listar_treinamentos') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Informações do Treinamento</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">Nome:</dt>
+                        <dd class="col-sm-8">{{ treinamento.nome }}</dd>
+                        
+                        <dt class="col-sm-4">Data:</dt>
+                        <dd class="col-sm-8">{{ treinamento.data_treinamento.strftime('%d/%m/%Y') }}</dd>
+                        
+                        <dt class="col-sm-4">Informações:</dt>
+                        <dd class="col-sm-8">{{ treinamento.informacoes or 'Nenhuma informação adicional' }}</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Ata do Treinamento</h5>
+                </div>
+                <div class="card-body">
+                    {% set ata_encontrada = false %}
+                    {% for participacao in participacoes %}
+                        {% if participacao.ata_arquivo %}
+                            {% set ata_encontrada = true %}
+                            <p>Ata disponível para visualização:</p>
+                            <a href="{{ url_for('static', filename=participacao.ata_arquivo) }}" class="btn btn-primary" target="_blank">
+                                <i class="bi bi-file-earmark-pdf"></i> Visualizar Ata
+                            </a>
+                            {% break %}
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if not ata_encontrada %}
+                        <p class="text-muted">Nenhuma ata anexada para este treinamento.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Participantes</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Data de Admissão</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for participacao in participacoes %}
+                        <tr>
+                            <td>{{ participacao.pessoa.nome }}</td>
+                            <td>{{ participacao.pessoa.data_admissao.strftime('%d/%m/%Y') }}</td>
+                            <td>
+                                {% if participacao.pessoa.ativo %}
+                                <span class="badge bg-success">Ativo</span>
+                                {% else %}
+                                <span class="badge bg-danger">Inativo</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="3" class="text-center">Nenhum participante registrado.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

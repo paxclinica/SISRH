@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Pax Clínica{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3">Dashboard</h1>
+            <p class="lead">Bem-vindo ao Sistema de Controle de Treinamentos da Pax Clínica</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-people text-primary"></i> Pessoas</h5>
+                    <p class="card-text">Gerencie o cadastro de funcionários da clínica.</p>
+                    <a href="{{ url_for('pessoas.listar_pessoas') }}" class="btn btn-outline-primary">Acessar</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-journal-text text-success"></i> Treinamentos</h5>
+                    <p class="card-text">Cadastre e gerencie os treinamentos realizados.</p>
+                    <a href="{{ url_for('treinamentos.listar_treinamentos') }}" class="btn btn-outline-success">Acessar</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-search text-info"></i> Consultas</h5>
+                    <p class="card-text">Consulte os treinamentos realizados por pessoa.</p>
+                    <a href="{{ url_for('consultas.treinamentos_por_pessoa') }}" class="btn btn-outline-info">Acessar</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-file-text text-warning"></i> Atas de Reunião</h5>
+                    <p class="card-text">Gerencie as atas de reuniões realizadas.</p>
+                    <a href="{{ url_for('atas.listar_atas') }}" class="btn btn-outline-warning">Acessar</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-chat-square-text text-danger"></i> Feedbacks</h5>
+                    <p class="card-text">Cadastre e gerencie os feedbacks realizados.</p>
+                    <a href="{{ url_for('feedbacks.listar_feedbacks') }}" class="btn btn-outline-danger">Acessar</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-people-fill text-secondary"></i> Usuários</h5>
+                    <p class="card-text">Gerencie os usuários do sistema.</p>
+                    <a href="{{ url_for('auth.listar_usuarios') }}" class="btn btn-outline-secondary">Acessar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

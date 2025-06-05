@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalhes do Feedback - Pax Clínica{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3">{{ feedback.nome }}</h1>
+            <p class="lead">Detalhes do feedback</p>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('feedbacks.listar_feedbacks') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+            <a href="{{ url_for('feedbacks.editar_feedback', id=feedback.id) }}" class="btn btn-pax-primary">
+                <i class="bi bi-pencil"></i> Editar
+            </a>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Informações do Feedback</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h6>Data do Feedback</h6>
+                        <p>{{ feedback.data_feedback.strftime('%d/%m/%Y') }}</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Informações</h6>
+                        <p style="white-space: pre-line;">{{ feedback.informacoes }}</p>
+                    </div>
+                    
+                    {% if feedback.arquivo_feedback %}
+                    <div class="mb-3">
+                        <h6>Arquivo do Feedback</h6>
+                        <a href="{{ url_for('static', filename='uploads/feedbacks/' + feedback.arquivo_feedback) }}" target="_blank" class="btn btn-outline-secondary">
+                            <i class="bi bi-file-earmark-text"></i> Visualizar Arquivo
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Participantes</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for participacao in feedback.participacoes %}
+                        <li class="list-group-item">
+                            <i class="bi bi-person"></i> {{ participacao.pessoa.nome }}
+                        </li>
+                        {% else %}
+                        <li class="list-group-item text-muted">Nenhum participante registrado</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+
+{% block title %}Consulta de Treinamentos/Atas de Reunião/Feedbacks por Pessoa - Pax Clínica{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3">Consulta de Treinamentos/Atas de Reunião/Feedbacks por Pessoa</h1>
+            <p class="lead">Visualize todos os registros associados a cada funcionário</p>
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('consultas.treinamentos_por_pessoa') }}">
+                <div class="row">
+                    <div class="col-md-8">
+                        <label for="pessoa_id" class="form-label">Selecione a Pessoa</label>
+                        <select class="form-select" id="pessoa_id" name="pessoa_id" required>
+                            <option value="">Selecione...</option>
+                            {% for pessoa in pessoas %}
+                            <option value="{{ pessoa.id }}" {% if pessoa_selecionada and pessoa.id == pessoa_selecionada.id %}selected{% endif %}>
+                                {{ pessoa.nome }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i> Consultar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    {% if pessoa_selecionada %}
+    <!-- Treinamentos -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Treinamentos de {{ pessoa_selecionada.nome }}</h5>
+        </div>
+        <div class="card-body">
+            {% if resultados_treinamentos %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Data</th>
+                            <th>Informações</th>
+                            <th>Ata</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for resultado in resultados_treinamentos %}
+                        <tr>
+                            <td>{{ resultado.treinamento.nome }}</td>
+                            <td>{{ resultado.data.strftime('%d/%m/%Y') }}</td>
+                            <td>{{ resultado.treinamento.informacoes|truncate(50) if resultado.treinamento.informacoes else '-' }}</td>
+                            <td>
+                                {% if resultado.participacao.ata_arquivo %}
+                                <a href="{{ url_for('static', filename=resultado.participacao.ata_arquivo) }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                    <i class="bi bi-file-earmark"></i> Ver
+                                </a>
+                                {% else %}
+                                <span class="text-muted">Não disponível</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('treinamentos.detalhes_treinamento', id=resultado.treinamento.id) }}" class="btn btn-sm btn-outline-info">
+                                    <i class="bi bi-eye"></i> Detalhes
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                Nenhum treinamento encontrado para {{ pessoa_selecionada.nome }}.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Atas de Reunião -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Atas de Reunião de {{ pessoa_selecionada.nome }}</h5>
+        </div>
+        <div class="card-body">
+            {% if resultados_atas %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Data</th>
+                            <th>Informações</th>
+                            <th>Arquivo</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for resultado in resultados_atas %}
+                        <tr>
+                            <td>{{ resultado.ata.nome }}</td>
+                            <td>{{ resultado.data.strftime('%d/%m/%Y') }}</td>
+                            <td>{{ resultado.ata.informacoes|truncate(50) if resultado.ata.informacoes else '-' }}</td>
+                            <td>
+                                {% if resultado.ata.arquivo_ata %}
+                                <a href="{{ url_for('static', filename=resultado.ata.arquivo_ata) }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                    <i class="bi bi-file-earmark"></i> Ver
+                                </a>
+                                {% else %}
+                                <span class="text-muted">Não disponível</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('atas.detalhes_ata', id=resultado.ata.id) }}" class="btn btn-sm btn-outline-info">
+                                    <i class="bi bi-eye"></i> Detalhes
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                Nenhuma ata de reunião encontrada para {{ pessoa_selecionada.nome }}.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Feedbacks -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Feedbacks de {{ pessoa_selecionada.nome }}</h5>
+        </div>
+        <div class="card-body">
+            {% if resultados_feedbacks %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Data</th>
+                            <th>Informações</th>
+                            <th>Arquivo</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for resultado in resultados_feedbacks %}
+                        <tr>
+                            <td>{{ resultado.feedback.nome }}</td>
+                            <td>{{ resultado.data.strftime('%d/%m/%Y') }}</td>
+                            <td>{{ resultado.feedback.informacoes|truncate(50) if resultado.feedback.informacoes else '-' }}</td>
+                            <td>
+                                {% if resultado.feedback.arquivo_feedback %}
+                                <a href="{{ url_for('static', filename=resultado.feedback.arquivo_feedback) }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                    <i class="bi bi-file-earmark"></i> Ver
+                                </a>
+                                {% else %}
+                                <span class="text-muted">Não disponível</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('feedbacks.detalhes_feedback', id=resultado.feedback.id) }}" class="btn btn-sm btn-outline-info">
+                                    <i class="bi bi-eye"></i> Detalhes
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                Nenhum feedback encontrado para {{ pessoa_selecionada.nome }}.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

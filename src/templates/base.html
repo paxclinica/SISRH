@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Pax Clínica - Sistema de Controle de Treinamentos{% endblock %}</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --pax-primary: #7DCFB6;
+            --pax-primary-dark: #5BB89F;
+            --pax-primary-light: #9FDAC8;
+            --pax-secondary: #f8f9fa;
+        }
+        
+        .sidebar {
+            min-height: calc(100vh - 56px);
+            background-color: var(--pax-secondary);
+            border-right: 1px solid #dee2e6;
+        }
+        .content {
+            padding: 20px;
+        }
+        .nav-link {
+            color: #495057;
+        }
+        .nav-link:hover {
+            background-color: var(--pax-primary-light);
+            color: #212529;
+        }
+        .nav-link.active {
+            color: var(--pax-primary-dark);
+            font-weight: bold;
+        }
+        .navbar-brand img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        .bg-pax-primary {
+            background-color: var(--pax-primary) !important;
+        }
+        .btn-pax-primary {
+            background-color: var(--pax-primary);
+            border-color: var(--pax-primary-dark);
+        }
+        .btn-pax-primary:hover {
+            background-color: var(--pax-primary-dark);
+            border-color: var(--pax-primary-dark);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+       <nav class="navbar navbar-expand-lg navbar-dark bg-pax-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('main.dashboard') }}">
+                <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Pax Clínica Logo">
+                Pax Clínica
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if session.get('usuario_id') %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> {{ session.get('usuario_nome', 'Usuário') }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Sair</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            {% if session.get('usuario_id') %}
+            <div class="col-md-3 col-lg-2 sidebar py-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}" href="{{ url_for('main.dashboard') }}">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint and request.endpoint.startswith('pessoas.') %}active{% endif %}" href="{{ url_for('pessoas.listar_pessoas') }}">
+                            <i class="bi bi-people"></i> Pessoas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint and request.endpoint.startswith('treinamentos.') %}active{% endif %}" href="{{ url_for('treinamentos.listar_treinamentos') }}">
+                            <i class="bi bi-journal-text"></i> Treinamentos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint and request.endpoint.startswith('consultas.') %}active{% endif %}" href="{{ url_for('consultas.treinamentos_por_pessoa') }}">
+                            <i class="bi bi-search"></i> Consultas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint and request.endpoint.startswith('atas.') %}active{% endif %}" href="{{ url_for('atas.listar_atas') }}">
+                            <i class="bi bi-file-text"></i> Atas de Reunião
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint and request.endpoint.startswith('feedbacks.') %}active{% endif %}" href="{{ url_for('feedbacks.listar_feedbacks') }}">
+                            <i class="bi bi-chat-square-text"></i> Feedbacks
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint and request.endpoint.startswith('auth.listar_usuarios') %}active{% endif %}" href="{{ url_for('auth.listar_usuarios') }}">
+                            <i class="bi bi-people-fill"></i> Usuários
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-9 col-lg-10 content">
+            {% else %}
+            <div class="col-12 content">
+            {% endif %}
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

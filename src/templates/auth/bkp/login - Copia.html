@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Pax Clínica</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --pax-primary: #7DCFB6;
+            --pax-primary-dark: #5BB89F;
+            --pax-primary-light: #9FDAC8;
+            --pax-secondary: #f8f9fa;
+        }
+        
+        body {
+            background-color: var(--pax-secondary);
+        }
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo img {
+            max-width: 200px;
+            margin-bottom: 15px;
+        }
+        .logo h1 {
+            color: var(--pax-primary-dark);
+        }
+        .btn-pax-primary {
+            background-color: var(--pax-primary);
+            border-color: var(--pax-primary-dark);
+            color: #212529;
+        }
+        .btn-pax-primary:hover {
+            background-color: var(--pax-primary-dark);
+            border-color: var(--pax-primary-dark);
+            color: #fff;
+        }
+        .form-control:focus {
+            border-color: var(--pax-primary);
+            box-shadow: 0 0 0 0.25rem rgba(125, 207, 182, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-container">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Pax Clínica Logo">
+                <h1>Pax Clínica</h1>
+                <p>Sistema de Controle de Treinamentos</p>
+            </div>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST" action="{{ url_for('auth.login') }}">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="senha" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="senha" name="senha" required>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-pax-primary">Entrar</button>
+                </div>
+            </form>
+            <!-- Removido link de cadastro conforme solicitado -->
+            
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

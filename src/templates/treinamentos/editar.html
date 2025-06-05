@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Treinamento - Pax Clínica{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="h3">Editar Treinamento</h1>
+            <p class="lead">Atualize as informações do treinamento</p>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('treinamentos.editar_treinamento', id=treinamento.id) }}" enctype="multipart/form-data">
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="nome" class="form-label">Nome do Treinamento</label>
+                        <input type="text" class="form-control" id="nome" name="nome" value="{{ treinamento.nome }}" required>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="data_treinamento" class="form-label">Data do Treinamento</label>
+                        <input type="date" class="form-control" id="data_treinamento" name="data_treinamento" value="{{ treinamento.data_treinamento.strftime('%Y-%m-%d') }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="instrutor_id" class="form-label">Instrutor</label>
+                        <select class="form-select" id="instrutor_id" name="instrutor_id">
+                            <option value="">Selecione um instrutor (opcional)</option>
+                            {% for pessoa in pessoas %}
+                                <option value="{{ pessoa.id }}" {% if treinamento.instrutor_id == pessoa.id %}selected{% endif %}>{{ pessoa.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="ata_arquivo" class="form-label">Ata do Treinamento (PDF)</label>
+                        <input type="file" class="form-control" id="ata_arquivo" name="ata_arquivo" accept=".pdf">
+                        {% set arquivo_mostrado = false %}
+                        {% for participacao in treinamento.participacoes %}
+                            {% if participacao.ata_arquivo and not arquivo_mostrado %}
+                                <div class="form-text">
+                                    Arquivo atual: <a href="{{ url_for('static', filename=participacao.ata_arquivo) }}" target="_blank">Visualizar</a>
+                                </div>
+                                {% set arquivo_mostrado = true %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="informacoes" class="form-label">Informações do Treinamento</label>
+                        <textarea class="form-control" id="informacoes" name="informacoes" rows="4">{{ treinamento.informacoes }}</textarea>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Participantes</label>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="form-text mb-2">Selecione os participantes do treinamento:</div>
+                                    <div class="row">
+                                        {% for pessoa in pessoas %}
+                                            <div class="col-md-6 mb-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="participantes" value="{{ pessoa.id }}" id="participante-{{ pessoa.id }}" 
+                                                           {% if pessoa.id in participantes_atuais %}checked{% endif %}>
+                                                    <label class="form-check-label" for="participante-{{ pessoa.id }}">
+                                                        {{ pessoa.nome }}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('treinamentos.listar_treinamentos') }}" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
